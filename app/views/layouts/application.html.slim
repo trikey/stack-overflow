@@ -1,0 +1,39 @@
+doctype html
+html.no-js[lang="en"]
+  head
+    meta[charset="utf-8"]
+    meta[http-equiv="X-UA-Compatible" content="IE=edge"]
+    meta[name="viewport" content="width=device-width, initial-scale=1.0"]
+    title = 'Stack overflow'
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = csrf_meta_tags
+  body
+    header
+      .contain-to-grid
+        nav.top-bar[data-topbar role="navigation"]
+          ul.right
+            - if user_signed_in?
+              li = link_to "Signed in as #{current_user.email}", edit_user_registration_path
+              li = link_to 'Sign out', destroy_user_session_path, method: :delete
+            - else
+              li = link_to 'Sign in', new_user_session_path
+              li = link_to 'Sign up', new_user_registration_path
+            li.has-form.show-for-small-only
+              = link_to 'Ask Question', new_question_path, class: 'button'
+
+    .row
+      article.medium-9.columns
+        = yield
+      aside.medium-3.columns
+        = link_to 'Ask Question', new_question_path, class: 'button expand hide-for-small-only'
+      footer
+
+    - if flash.present?
+      .alert-boxes
+        - flash.each do |key, value|
+          .alert-box[data-alert class="#{alert_class(key)}"]
+            = value + ' '
+            a.close[href="#"] ×
+
+    = javascript_include_tag 'application'

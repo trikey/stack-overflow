@@ -1,0 +1,4 @@
+- content_for :title, @question.title.present? ? @question.title : 'Edit Question'
+
+h1 = 'Edit Question'
+== render 'form'

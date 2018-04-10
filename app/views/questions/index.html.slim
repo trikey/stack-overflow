@@ -1,1 +1,8 @@
+ul.questions
+  - @questions.each do |question|
+    li[data-question="#{question.id}"]
+      .content
+        h5 = link_to question.title, question_path(question)
+
+
 = link_to 'Ask question', new_question_path

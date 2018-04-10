@@ -1,0 +1,6 @@
+- content_for :title, @question.title
+
+h2#answers-title = pluralize(@question.answers.count, 'answer')
+- if @question.answers.present?
+  ul.answers
+    = render @question.answers
