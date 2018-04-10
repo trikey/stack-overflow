@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 describe AnswersController do
+  login_user
   let(:question) { create(:question) }
-  let(:answer) { create(:answer) }
+  let(:answer) { create(:answer, user: subject.current_user) }
 
   describe 'GET #new' do
     before { get :new, params: { question_id: question.id } }
