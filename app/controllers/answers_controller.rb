@@ -16,7 +16,7 @@ class AnswersController < ApplicationController
       flash[:notice] = 'Your answer successfully created.'
       redirect_to @answer.question
     else
-      render :new
+      redirect_to @question, alert: 'Please fill the body of answer'
     end
   end
 
@@ -29,7 +29,12 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    @answer.destroy
+    if @answer.user == current_user
+      @answer.destroy
+      flash[:notice] = 'Answer was successfully deleted.'
+    else
+      flash[:alert] = 'Can not delete not your answer'
+    end
     redirect_to @answer.question
   end
 

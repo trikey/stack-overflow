@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 feature 'Answer the question', %q{
-  In order to help and share my knowledge
+  In order to give answer to question available to all
   As logged in user
   I want to answer the question
 } do
@@ -9,7 +9,7 @@ feature 'Answer the question', %q{
   given(:user) { create(:user) }
   given(:question) { create(:question) }
 
-  scenario 'User answers' do
+  scenario 'User answers the question' do
     sign_in(user)
     visit question_path(question)
 
@@ -21,11 +21,11 @@ feature 'Answer the question', %q{
     end
 
     expect(current_path).to eq question_path(question)
-    expect(page).to have_content 'Answer was successfully created.'
+    expect(page).to have_content 'Your answer successfully created.'
     expect(page).to have_content data[:body]
   end
 
-  scenario 'User attempts to answers with invalid data' do
+  scenario 'User attempts to answer with invalid data' do
     sign_in(user)
     visit question_path(question)
 
@@ -35,7 +35,7 @@ feature 'Answer the question', %q{
     end
 
     expect(current_path).to eq question_path(question)
-    expect(page).to have_content 'Please review the problems below'
+    expect(page).to have_content 'Please fill the body of answer'
   end
 
   scenario 'Guest attempts to answers' do
