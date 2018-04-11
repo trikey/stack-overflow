@@ -18,8 +18,8 @@ feature 'Edit question', %q{
     expect(current_path).to eq edit_question_path(question)
 
     question_data = {
-        title: 'Such question?',
-        body: 'Much wow'
+      title: 'Such question?',
+      body: 'Much wow'
     }
 
     within "#edit_question_#{question.id}" do
