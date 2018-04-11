@@ -5,4 +5,8 @@ module FeatureMacros
     fill_in 'Password', with: user.password
     click_on 'Log in'
   end
+
+  def answer_html(answer)
+    find("#answer_#{answer.id}")
+  end
 end

@@ -1,0 +1,7 @@
+li[id="answer_#{answer.id}"]
+  p = answer.body
+
+  ul
+    - if answer.user == current_user
+      li = link_to 'Edit', answer
+      li = link_to 'Delete', answer, method: :delete
