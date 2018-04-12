@@ -1,11 +1,7 @@
 class AnswersController < ApplicationController
   before_action :set_answer, only: [:edit, :update, :destroy]
-  before_action :set_question, only: [:new, :create]
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
-
-  def new
-    @answer = @question.answers.new
-  end
+  before_action :set_question, only: [:create]
+  before_action :authenticate_user!, only: [:create, :edit, :update, :destroy]
 
   def edit; end
 
@@ -16,7 +12,7 @@ class AnswersController < ApplicationController
       flash[:notice] = 'Your answer successfully created.'
       redirect_to @answer.question
     else
-      redirect_to @question, alert: 'Please fill the body of answer'
+      render 'questions/show';
     end
   end
 
@@ -29,7 +25,7 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    if @answer.user == current_user
+    if current_user.author_of?(@answer)
       @answer.destroy
       flash[:notice] = 'Answer was successfully deleted.'
     else

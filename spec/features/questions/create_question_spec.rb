@@ -13,11 +13,17 @@ feature 'Create question', %q{
 
     visit questions_path
     click_on 'Ask question'
-    fill_in 'Title', with: 'Test question'
-    fill_in 'Body', with: 'text text text'
-    click_on 'Create'
+    data = attributes_for(:question)
+
+    within '#new_question' do
+      fill_in 'Title', with: data[:title]
+      fill_in 'Body', with: data[:body]
+      click_button 'Create'
+    end
 
     expect(page).to have_content 'Your question successfully created.'
+    expect(page).to have_content data[title]
+    expect(page).to have_content data[body]
   end
 
   scenario 'User attempts to create a question with invalid data' do
@@ -31,7 +37,8 @@ feature 'Create question', %q{
     click_button 'Create'
 
     expect(current_path).to eq questions_path
-    expect(page).to have_content 'Please review the problems below'
+    expect(page).to have_content 'Title -can\'t be blank'
+    expect(page).to have_content 'Body - can\'t be blank'
   end
 
   scenario 'Non-authenticated user try to create question' do

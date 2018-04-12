@@ -4,35 +4,13 @@ describe AnswersController do
   login_user
   let(:question) { create(:question) }
   let(:answer) { create(:answer, user: subject.current_user) }
-
-  describe 'GET #new' do
-    before { get :new, params: { question_id: question.id } }
-
-    it 'assigns a new Answer to @answer' do
-      expect(assigns(:answer)).to be_a_new(Answer)
-    end
-
-    it 'renders new view' do
-      expect(response).to render_template :new
-    end
-  end
-
-  describe 'GET #edit' do
-    before { get :edit, params: { id: answer } }
-
-    it 'assigns the requested answer to @answer' do
-      expect(assigns(:answer)).to eq answer
-    end
-
-    it 'renders edit view' do
-      expect(response).to render_template :edit
-    end
-  end
+  let(:user) { create(:user) }
 
   describe 'POST #create' do
     context 'with valid attributes' do
       it 'saves the new answer in the database' do
-        expect { post :create, params: { question_id: question.id, answer: attributes_for(:answer) } }.to change(question.answers, :count).by(1)
+        expect { post :create, params: { question_id: question.id, answer: attributes_for(:answer) } }
+            .to change(question.answers.where(user: subject.current_user), :count).by(1)
       end
 
       it 'redirects to question show view' do
@@ -48,7 +26,7 @@ describe AnswersController do
 
       it 'redirects to question' do
         post :create, params: { question_id: question.id, answer: attributes_for(:invalid_answer) }
-        expect(response).to redirect_to question_path(question)
+        expect(response).to render_template 'questions/show'
       end
     end
   end
@@ -87,15 +65,24 @@ describe AnswersController do
   end
 
   describe 'DELETE #destroy' do
-    before { answer }
+    context 'author' do
+      before { answer }
 
-    it 'deletes answer' do
-      expect { delete :destroy, params: { id: answer } }.to change(Answer, :count).by(-1)
+      it 'deletes answer' do
+        expect { delete :destroy, params: { id: answer } }.to change(Answer, :count).by(-1)
+      end
+
+      it 'redirect to index view' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to answer.question
+      end
     end
 
-    it 'redirect to index view' do
-      delete :destroy, params: { id: answer }
-      expect(response).to redirect_to answer.question
+    context 'not author' do
+      before { @answer = create(:answer, user: user) }
+      it 'can not delete answer' do
+        expect { delete :destroy, params: { id: @answer.id} }.to_not change(Answer, :count)
+      end
     end
   end
 end

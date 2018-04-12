@@ -20,7 +20,7 @@ feature 'Delete answer', %q{
 
     expect(current_path).to eq question_path(question)
     expect(page).to have_content 'Answer was successfully deleted.'
-    expect(page).not_to have_selector "#answer_#{answer.id}"
+    expect(page).not_to have_content answer.body
   end
 
   scenario 'User attempts to delete someone else answer' do
