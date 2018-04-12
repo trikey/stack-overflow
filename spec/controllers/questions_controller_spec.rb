@@ -3,6 +3,7 @@ require 'rails_helper'
 describe QuestionsController do
   login_user
   let(:question) { create(:question, user: subject.current_user) }
+  let(:user) { create(:user) }
 
   describe 'GET #index' do
     let(:questions) { create_list(:question, 2) }
@@ -57,7 +58,8 @@ describe QuestionsController do
   describe 'POST #create' do
     context 'with valid attributes' do
       it 'saves the new question in the database' do
-        expect { post :create, params: { question: attributes_for(:question) } }.to change(Question, :count).by(1)
+        expect { post :create, params: { question: attributes_for(:question) } }
+            .to change(Question.where(user: subject.current_user), :count).by(1)
       end
 
       it 'redirects to show view' do
@@ -103,8 +105,8 @@ describe QuestionsController do
 
       it 'does not change question attributes' do
         question.reload
-        expect(question.title).to eq 'MyString'
-        expect(question.body).to eq 'MyText'
+        expect(question.title).not_to eq 'new title'
+        expect(question.body).not_to eq nil
       end
 
       it 're-renders edit view' do
@@ -114,15 +116,24 @@ describe QuestionsController do
   end
 
   describe 'DELETE #destroy' do
-    before { question }
+    context 'author' do
+      before { question }
 
-    it 'deletes question' do
-      expect { delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
+      it 'deletes question' do
+        expect { delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
+      end
+
+      it 'redirect to index view' do
+        delete :destroy, params: { id: question }
+        expect(response).to redirect_to questions_path
+      end
     end
 
-    it 'redirect to index view' do
-      delete :destroy, params: { id: question }
-      expect(response).to redirect_to questions_path
+    context 'not author' do
+      before { @question = create(:question, user: user) }
+      it 'can not delete question' do
+        expect { delete :destroy, params: { id: @question.id} }.to_not change(Question, :count)
+      end
     end
   end
 end

@@ -6,13 +6,13 @@ feature 'View questions', %q{
   I want to be able view questions
 } do
 
-  given(:user) { create(:user) }
+  given!(:questions) { create_list(:question, 2) }
 
   scenario 'User views questions' do
-    questions = create_list(:question, 2)
     visit questions_path
 
-    expect(page).to have_content questions.first.title
-    expect(page).to have_content questions.last.title
+    questions.each do |question|
+      expect(page).to have_content question.title
+    end
   end
 end

@@ -1,5 +1,5 @@
 = simple_form_for @question do |f|
   = f.error_notification
-  = f.input :title
-  = f.input :body, input_html: { rows: 15 }
+  = f.input :title, label: 'Title -'
+  = f.input :body, input_html: { rows: 15 }, label: 'Body -'
   = f.button :submit

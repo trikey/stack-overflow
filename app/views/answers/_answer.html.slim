@@ -1,7 +1,9 @@
-li[id="answer_#{answer.id}"]
-  p = answer.body
+- if answer.id
+  li[id="answer_#{answer.id}"]
+    p = answer.body
 
-  ul
-    - if answer.user == current_user
-      li = link_to 'Edit', answer
-      li = link_to 'Delete', answer, method: :delete
+    - if user_signed_in?
+      ul
+        - if current_user.author_of?(answer)
+          li = link_to 'Edit', answer
+          li = link_to 'Delete', answer, method: :delete

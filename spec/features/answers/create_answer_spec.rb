@@ -34,8 +34,8 @@ feature 'Answer the question', %q{
       click_button 'Create Answer'
     end
 
-    expect(current_path).to eq question_path(question)
-    expect(page).to have_content 'Please fill the body of answer'
+    expect(current_path).to eq question_answers_path(question)
+    expect(page).to have_content 'Your answer -can\'t be blank'
   end
 
   scenario 'Guest attempts to answers' do

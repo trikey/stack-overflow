@@ -7,11 +7,11 @@ h2#answers-title = pluralize(@question.answers.count, 'answer')
     = render @question.answers
 
 - if user_signed_in?
-  = render 'answers/form', question: @question, answer: Answer.new
+  = render 'answers/form', question: @question, answer: @answer
 - else
   = link_to 'Sign in to answer the Question', new_user_session_path
 
-- if @question.user == current_user
+- if user_signed_in? && current_user.author_of?(@question)
   = link_to 'Edit', edit_question_path(@question)
   = link_to 'Delete', question_path(@question), method: :delete
 
