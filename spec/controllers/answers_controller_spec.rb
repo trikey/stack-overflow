@@ -10,7 +10,12 @@ describe AnswersController do
     context 'with valid attributes' do
       it 'saves the new answer in the database' do
         expect { post :create, params: { question_id: question.id, answer: attributes_for(:answer) } }
-            .to change(question.answers.where(user: subject.current_user), :count).by(1)
+            .to change(question.answers, :count).by(1)
+      end
+
+      it 'connects answer to user after create' do
+        expect { post :create, params: { question_id: question.id, answer: attributes_for(:answer) } }
+            .to change(subject.current_user.answers, :count).by(1)
       end
 
       it 'redirects to question show view' do
@@ -82,6 +87,11 @@ describe AnswersController do
       before { @answer = create(:answer, user: user) }
       it 'can not delete answer' do
         expect { delete :destroy, params: { id: @answer.id} }.to_not change(Answer, :count)
+      end
+
+      it 'redirect to answers\'s question page' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to answer.question
       end
     end
   end
