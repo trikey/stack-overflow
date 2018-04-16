@@ -9,7 +9,7 @@ feature 'Answer the question', %q{
   given(:user) { create(:user) }
   given(:question) { create(:question) }
 
-  scenario 'User answers the question' do
+  scenario 'User answers the question', js: true do
     sign_in(user)
     visit question_path(question)
 
@@ -21,11 +21,12 @@ feature 'Answer the question', %q{
     end
 
     expect(current_path).to eq question_path(question)
-    expect(page).to have_content 'Your answer successfully created.'
-    expect(page).to have_content data[:body]
+    within '.answers' do
+      expect(page).to have_content data[:body]
+    end
   end
 
-  scenario 'User attempts to answer with invalid data' do
+  scenario 'User attempts to answer with invalid data', js: true do
     sign_in(user)
     visit question_path(question)
 
@@ -34,11 +35,11 @@ feature 'Answer the question', %q{
       click_button 'Create Answer'
     end
 
-    expect(current_path).to eq question_answers_path(question)
+    expect(current_path).to eq question_path(question)
     expect(page).to have_content 'Your answer -can\'t be blank'
   end
 
-  scenario 'Guest attempts to answers' do
+  scenario 'Guest attempts to answers', js: true do
     visit question_path(question)
     expect(page).not_to have_selector '#new_answer'
     expect(page).to have_link 'Sign in to answer the Question'

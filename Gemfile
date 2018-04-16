@@ -32,6 +32,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'slim-rails'
 gem 'devise'
 gem 'simple_form'
+gem 'jquery-rails'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -47,6 +48,9 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'rubocop', '~> 0.51.0', require: false
   gem 'rails-controller-testing'
+
+  gem 'selenium-webdriver'
+  gem 'database_cleaner'
 end
 
 group :development do

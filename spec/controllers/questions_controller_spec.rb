@@ -58,8 +58,8 @@ describe QuestionsController do
   describe 'POST #create' do
     context 'with valid attributes' do
       it 'saves the new question in the database' do
-        expect { post :create, params: { question: attributes_for(:question) } }
-            .to change(subject.current_user.questions, :count).by(1)
+        expect { post :create, params: { question: attributes_for(:question) } }.
+          to change(subject.current_user.questions, :count).by(1)
       end
 
       it 'redirects to show view' do
@@ -132,7 +132,7 @@ describe QuestionsController do
     context 'not author' do
       before { @question = create(:question, user: user) }
       it 'can not delete question' do
-        expect { delete :destroy, params: { id: @question.id} }.to_not change(Question, :count)
+        expect { delete :destroy, params: { id: @question.id } }.to_not change(Question, :count)
       end
 
       it 'redirect to index view' do
