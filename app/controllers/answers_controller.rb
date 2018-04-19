@@ -1,5 +1,5 @@
 class AnswersController < ApplicationController
-  before_action :set_answer, only: [:edit, :update, :destroy]
+  before_action :set_answer, only: [:edit, :update, :destroy, :best]
   before_action :set_question, only: [:create]
   before_action :authenticate_user!, only: [:create, :edit, :update, :destroy]
 
@@ -11,6 +11,12 @@ class AnswersController < ApplicationController
   end
 
   def update
+    unless current_user.author_of?(@answer)
+      flash[:alert] = 'Can not update not your answer'
+      redirect_to @answer.question
+      return
+    end
+
     if @answer.update(answer_params)
       redirect_to @answer.question
     else
@@ -25,6 +31,18 @@ class AnswersController < ApplicationController
     else
       flash[:alert] = 'Can not delete not your answer'
     end
+    redirect_to @answer.question
+  end
+
+  def best
+    unless current_user.author_of?(@answer.question)
+      flash[:alert] = 'Can not set best answer of not your question'
+      redirect_to @answer.question
+      return
+    end
+
+    @answer.make_best
+    flash[:notice] = 'Answer marked as best'
     redirect_to @answer.question
   end
 

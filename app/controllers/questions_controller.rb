@@ -28,6 +28,12 @@ class QuestionsController < ApplicationController
   end
 
   def update
+    unless current_user.author_of?(@question)
+      flash[:alert] = 'Can not update not your question'
+      redirect_to @question
+      return
+    end
+
     if @question.update(question_params)
       flash[:notice] = 'Question was successfully updated.'
       redirect_to @question
