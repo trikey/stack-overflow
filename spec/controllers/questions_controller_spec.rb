@@ -81,7 +81,7 @@ describe QuestionsController do
   end
 
   describe 'PATCH #update' do
-    context 'valid attributes' do
+    context 'author tries to update question with valid attributes' do
       it 'assings the requested question to @question' do
         patch :update, params: { id: question, question: attributes_for(:question) }
         expect(assigns(:question)).to eq question
@@ -96,6 +96,22 @@ describe QuestionsController do
 
       it 'redirects to the updated question' do
         patch :update, params: { id: question, question: attributes_for(:question) }
+        expect(response).to redirect_to question
+      end
+    end
+
+    context 'not author tries to update question' do
+      before {
+        @question = create(:question, user: user)
+        patch :update, params: { id: question, question: { title: 'new title', body: 'new body' } }
+      }
+      it 'can not update question' do
+        @question.reload
+        expect(@question.title).not_to eq 'new title'
+        expect(@question.body).not_to eq 'new body'
+      end
+
+      it 'redirect to question\'s question page' do
         expect(response).to redirect_to question
       end
     end

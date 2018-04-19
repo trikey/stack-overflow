@@ -1,9 +1,21 @@
 - if answer.persisted?
-  li[id="answer_#{answer.id}"]
-    p = answer.body
+  li.answer[id="answer_#{answer.id}"]
+    p
+      - if answer.best?
+        strong Best answer
+        br
+      = answer.body
 
-    - if user_signed_in?
-      ul
-        - if current_user.author_of?(answer)
-          li = link_to 'Edit', answer
-          li = link_to 'Delete', answer, method: :delete
+      - if user_signed_in?
+        ul
+          - if !answer.best? && current_user.author_of?(answer.question)
+            li = link_to 'Make Best', best_answer_path(answer), method: :patch, remote: true
+          - if current_user.author_of?(answer)
+            li
+              = link_to 'Edit', answer, class: 'edit-answer', data: { 'answer-id': answer.id }
+              p
+                = simple_form_for answer, remote: true do |f|
+                  = f.error_notification
+                  = f.input :body, label: 'Your answer -'
+                  = f.button :submit, 'Update'
+            li = link_to 'Delete', answer, method: :delete, remote: true

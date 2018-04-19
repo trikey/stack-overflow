@@ -37,7 +37,7 @@ describe AnswersController do
   end
 
   describe 'PATCH #update' do
-    context 'valid attributes' do
+    context 'author updates answer with valid attributes' do
       it 'assigns the requested answer to @answer' do
         patch :update, params: { id: answer, answer: attributes_for(:answer) }
         expect(assigns(:answer)).to eq answer
@@ -67,6 +67,21 @@ describe AnswersController do
         expect(response).to render_template :edit
       end
     end
+
+    context 'not author tries to update answer' do
+      before {
+        @answer = create(:answer, user: user)
+        patch :update, params: { id: @answer, answer: { body: 'new body' } }
+      }
+      it 'can not update answer' do
+        @answer.reload
+        expect(@answer.body).not_to eq 'new body'
+      end
+
+      it 'redirect to answers\'s question page' do
+        expect(response).to redirect_to @answer.question
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
@@ -92,6 +107,41 @@ describe AnswersController do
       it 'redirect to answers\'s question page' do
         delete :destroy, params: { id: answer }
         expect(response).to redirect_to answer.question
+      end
+    end
+  end
+
+
+  describe 'PATCH #best' do
+    context 'author' do
+      let!(:question) { create(:question, user: subject.current_user) }
+      let!(:answer1) { create(:answer, question: question) }
+      let!(:answer2) { create(:answer, question: question, best: true) }
+
+      before do
+        patch :best, params: { id: answer1, format: :js }
+      end
+
+      it 'assigns answer' do
+        expect(assigns(:answer)).to eq answer1
+      end
+
+      it 'set answer as best' do
+        expect(answer1.reload).to be_best
+        expect(answer2.reload).to_not be_best
+      end
+
+      it 'redirect to question' do
+        expect(response).to redirect_to answer1.question
+      end
+    end
+
+    context 'not author' do
+      let!(:question) { create(:question) }
+      let!(:answer) { create(:answer, question: question) }
+
+      it 'can not set answer as best' do
+        expect { patch :best, params: { id: answer, format: :js } }.to_not change(answer, :best)
       end
     end
   end
