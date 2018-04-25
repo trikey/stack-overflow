@@ -1,0 +1,5 @@
+ul.attachments.list-inline
+  - object.attachments.each do |a|
+    - if a.persisted?
+      li class = "attachment_#{a.id}"
+        = link_to a.file.filename, a.file.url
