@@ -1,4 +1,6 @@
 = simple_form_for [question, answer], remote: true do |f|
   = f.error_notification
   = f.input :body, label: 'Your answer -'
+  .form-group
+    = render 'shared/nested_form/attachments_form', f: f, attachable: answer
   = f.button :submit

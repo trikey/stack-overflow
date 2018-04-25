@@ -5,6 +5,7 @@
         strong Best answer
         br
       = answer.body
+      = render partial: 'shared/nested_form/attachments', locals: { object: answer }
 
       - if user_signed_in?
         ul
@@ -17,5 +18,7 @@
                 = simple_form_for answer, remote: true do |f|
                   = f.error_notification
                   = f.input :body, label: 'Your answer -'
+                  .form-group
+                    = render 'shared/nested_form/attachments_form', f: f, attachable: answer
                   = f.button :submit, 'Update'
             li = link_to 'Delete', answer, method: :delete, remote: true

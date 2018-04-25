@@ -20,3 +20,9 @@
 .idea
 config/database.yml
 tmp
+
+# Ignore uploaded files
+/public/system
+/public/tmp
+/public/uploads
+/public/spec

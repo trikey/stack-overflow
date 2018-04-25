@@ -33,6 +33,10 @@ gem 'slim-rails'
 gem 'devise'
 gem 'simple_form'
 gem 'jquery-rails'
+gem 'carrierwave'
+gem 'remotipart'
+gem 'cocoon'
+
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

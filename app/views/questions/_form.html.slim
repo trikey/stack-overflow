@@ -2,4 +2,8 @@
   = f.error_notification
   = f.input :title, label: 'Title -'
   = f.input :body, input_html: { rows: 15 }, label: 'Body -'
+
+  .form-group
+    = render 'shared/nested_form/attachments_form', f: f, attachable: @question
+
   = f.button :submit
