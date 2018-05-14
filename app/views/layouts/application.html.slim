@@ -22,12 +22,15 @@ html.no-js[lang="en"]
             li.has-form.show-for-small-only
               = link_to 'Ask Question', new_question_path, class: 'button'
 
+    div#flash
+
     .row
       article.medium-9.columns
         = yield
       aside.medium-3.columns
         = link_to 'Ask Question', new_question_path, class: 'button expand hide-for-small-only'
       footer
+
 
     - if flash.present?
       .alert-boxes
