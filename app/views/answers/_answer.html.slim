@@ -1,6 +1,8 @@
 - if answer.persisted?
   li.answer[id="answer_#{answer.id}"]
     p
+      = render 'shared/votes_panel', object: answer
+    p
       - if answer.best?
         strong Best answer
         br

@@ -1,12 +1,14 @@
 require 'rails_helper'
 
 describe AnswersController do
-  login_user
+  it_behaves_like 'voted'
+
   let(:question) { create(:question) }
   let(:answer) { create(:answer, user: subject.current_user) }
   let(:user) { create(:user) }
 
   describe 'POST #create' do
+    login_user
     context 'with valid attributes' do
       it 'saves the new answer in the database' do
         expect { post :create, params: { question_id: question.id, answer: attributes_for(:answer), format: :js } }.
@@ -37,6 +39,7 @@ describe AnswersController do
   end
 
   describe 'PATCH #update' do
+    login_user
     context 'author updates answer with valid attributes' do
       it 'assigns the requested answer to @answer' do
         patch :update, params: { id: answer, answer: attributes_for(:answer) }
@@ -85,6 +88,7 @@ describe AnswersController do
   end
 
   describe 'DELETE #destroy' do
+    login_user
     context 'author' do
       before { answer }
 
@@ -113,6 +117,7 @@ describe AnswersController do
 
 
   describe 'PATCH #best' do
+    login_user
     context 'author' do
       let!(:question) { create(:question, user: subject.current_user) }
       let!(:answer1) { create(:answer, question: question) }

@@ -1,7 +1,9 @@
 class Answer < ApplicationRecord
-  belongs_to :user
+  include Attachable
+  include Authorable
+  include Votable
+
   belongs_to :question
-  has_many :attachments, as: :attachable, dependent: :destroy
 
   validates :body, presence: true
   validates :best, uniqueness: { scope: :question_id }, if: :best?

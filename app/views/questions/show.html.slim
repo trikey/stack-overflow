@@ -1,6 +1,8 @@
 p = @question.title
 p = @question.body
 p
+  = render 'shared/votes_panel', object: @question
+p
   = render partial: 'shared/nested_form/attachments', locals: { object: @question }
 
 h2#answers-title = pluralize(@question.answers.count, 'answer')

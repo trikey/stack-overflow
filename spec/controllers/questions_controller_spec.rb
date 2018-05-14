@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 describe QuestionsController do
-  login_user
+  it_behaves_like 'voted'
+
   let(:question) { create(:question, user: subject.current_user) }
   let(:user) { create(:user) }
 
   describe 'GET #index' do
+    login_user
     let(:questions) { create_list(:question, 2) }
 
     before { get :index }
@@ -20,6 +22,7 @@ describe QuestionsController do
   end
 
   describe 'GET #show' do
+    login_user
     before { get :show, params: { id: question } }
 
     it 'assings the requested question to @question' do
@@ -36,6 +39,7 @@ describe QuestionsController do
   end
 
   describe 'GET #new' do
+    login_user
     before { get :new }
 
     it 'assigns a new Question to @question' do
@@ -52,6 +56,7 @@ describe QuestionsController do
   end
 
   describe 'GET #edit' do
+    login_user
     before { get :edit, params: { id: question } }
 
     it 'assings the requested question to @question' do
@@ -64,6 +69,7 @@ describe QuestionsController do
   end
 
   describe 'POST #create' do
+    login_user
     context 'with valid attributes' do
       it 'saves the new question in the database' do
         expect { post :create, params: { question: attributes_for(:question) } }.
@@ -89,6 +95,7 @@ describe QuestionsController do
   end
 
   describe 'PATCH #update' do
+    login_user
     context 'author tries to update question with valid attributes' do
       it 'assings the requested question to @question' do
         patch :update, params: { id: question, question: attributes_for(:question) }
@@ -140,6 +147,7 @@ describe QuestionsController do
   end
 
   describe 'DELETE #destroy' do
+    login_user
     context 'author' do
       before { question }
 
