@@ -1,22 +1,26 @@
-p = @question.title
-p = @question.body
-p
-  = render 'shared/votes_panel', object: @question
-p
-  = render partial: 'shared/nested_form/attachments', locals: { object: @question }
+.question id="question_#{@question.id}" data-question-id="#{@question.id}"
+  p = @question.title
+  p = @question.body
+  p
+    = render 'shared/votes_panel', object: @question
+  p
+    = render partial: 'shared/nested_form/attachments', locals: { object: @question }
 
-h2#answers-title = pluralize(@question.answers.count, 'answer')
-- if @question.answers.present?
-  ul.answers
-    = render @question.answers
+  p
+    = render 'comments/comments', commentable: @question
 
-- if user_signed_in?
-  = render 'answers/form', question: @question, answer: @answer
-- else
-  = link_to 'Sign in to answer the Question', new_user_session_path
+  h2#answers-title = pluralize(@question.answers.count, 'answer')
+  - if @question.answers.present?
+    ul.answers
+      = render @question.answers
 
-- if user_signed_in? && current_user.author_of?(@question)
-  = link_to 'Edit', edit_question_path(@question)
-  = link_to 'Delete', question_path(@question), method: :delete
+  - if user_signed_in?
+    = render 'answers/form', question: @question, answer: @answer
+  - else
+    = link_to 'Sign in to answer the Question', new_user_session_path
+
+  - if user_signed_in? && current_user.author_of?(@question)
+    = link_to 'Edit', edit_question_path(@question)
+    = link_to 'Delete', question_path(@question), method: :delete
 
 

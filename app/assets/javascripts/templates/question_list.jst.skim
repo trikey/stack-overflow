@@ -1,0 +1,4 @@
+li[data-question="#{@id}"]
+  .content
+    h5
+      a href="/questions/#{@id}" #{@title}
