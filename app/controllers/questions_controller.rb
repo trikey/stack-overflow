@@ -1,6 +1,7 @@
 class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:index, :show]
+  after_action :publish_question, only: [:create]
 
   include Voted
 
@@ -59,6 +60,14 @@ class QuestionsController < ApplicationController
   end
 
   private
+
+  def publish_question
+    return if @question.errors.any?
+    ActionCable.server.broadcast(
+        'questions',
+        ApplicationController.render(json: { question: @question })
+    )
+  end
 
   def set_question
     @question = Question.find(params[:id])

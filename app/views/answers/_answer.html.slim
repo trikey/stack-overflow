@@ -8,6 +8,7 @@
         br
       = answer.body
       = render partial: 'shared/nested_form/attachments', locals: { object: answer }
+      = render 'comments/comments', commentable: answer
 
       - if user_signed_in?
         ul

@@ -36,7 +36,8 @@ gem 'jquery-rails'
 gem 'carrierwave'
 gem 'remotipart'
 gem 'cocoon'
-
+gem 'skim'
+gem 'gon'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -52,8 +53,8 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'rubocop', '~> 0.51.0', require: false
   gem 'rails-controller-testing'
+  gem 'poltergeist'
 
-  gem 'selenium-webdriver'
   gem 'database_cleaner'
   gem 'capybara-webkit'
 end
@@ -69,6 +70,10 @@ end
 
 group :test do
   gem 'shoulda-matchers'
+  gem 'launchy'
+  gem 'fuubar'
+  gem 'rack_session_access'
+  gem 'rspec-page-regression', github: 'teachbase/rspec-page-regression', branch: 'use-imatcher'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
