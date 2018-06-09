@@ -4,15 +4,10 @@ class CommentsController < ApplicationController
 
   after_action :publish_comment
 
+  respond_to :json
+
   def create
-    @comment = @commentable.comments.build(comment_params.merge(user: current_user))
-    if @comment.save
-      message = 'Your comment successfully added'
-      render json: { comment: @comment, message: message }
-    else
-      message = 'Your comment not added'
-      render json: { errors: @comment.errors, message: message }, status: :unprocessable_entity
-    end
+    respond_with(@comment = @commentable.comments.create(comment_params.merge(user: current_user)))
   end
 
   private

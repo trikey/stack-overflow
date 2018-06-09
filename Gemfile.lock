@@ -325,6 +325,7 @@ DEPENDENCIES
   rails (~> 5.1.6)
   rails-controller-testing
   remotipart
+  responders
   rspec-page-regression!
   rspec-rails
   rubocop (~> 0.51.0)
