@@ -1,17 +1,21 @@
 class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:index, :show]
+  before_action :build_answer, only: [:show]
+  before_action :build_attachments, only: [:edit]
   after_action :publish_question, only: [:create]
+
+  respond_to :js, only: [:update]
+  respond_to :json
 
   include Voted
 
   def index
-    @questions = Question.all
+    respond_with(@questions = Question.all)
   end
 
   def show
-    @answer = @question.answers.new
-    @answer.attachments.build
+    respond_with @question
   end
 
   def new
@@ -19,44 +23,19 @@ class QuestionsController < ApplicationController
     @question.attachments.build
   end
 
-  def edit
-    @question.attachments.build
-  end
+  def edit; end
 
   def create
-    @question = current_user.questions.new(question_params)
-
-    if @question.save
-      flash[:notice] = 'Your question successfully created.'
-      redirect_to @question
-    else
-      render :new
-    end
+    respond_with(@question = current_user.questions.create(question_params))
   end
 
   def update
-    unless current_user.author_of?(@question)
-      flash[:alert] = 'Can not update not your question'
-      redirect_to @question
-      return
-    end
-
-    if @question.update(question_params)
-      flash[:notice] = 'Question was successfully updated.'
-      redirect_to @question
-    else
-      render :edit
-    end
+    @question.update(question_params) if current_user.author_of?(@question)
+    respond_with(@question)
   end
 
   def destroy
-    if current_user.author_of?(@question)
-      @question.destroy
-      flash[:notice] = 'Question was successfully deleted.'
-    else
-      flash[:alert] = 'Can not delete not your question'
-    end
-    redirect_to questions_path
+    respond_with(@question.destroy) if current_user.author_of?(@question)
   end
 
   private
@@ -67,6 +46,15 @@ class QuestionsController < ApplicationController
         'questions',
         ApplicationController.render(json: { question: @question })
     )
+  end
+
+  def build_answer
+    @answer = @question.answers.build
+    @answer.attachments.build
+  end
+
+  def build_attachments
+    @question.attachments.build
   end
 
   def set_question
