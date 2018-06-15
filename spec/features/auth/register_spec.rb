@@ -20,7 +20,12 @@ feature 'Register', %q{
     click_button 'Sign up'
 
     expect(current_path).to eq root_path
-    expect(page).to have_content 'Welcome! You have signed up successfully.'
+    expect(page).to have_content 'A message with a confirmation link has been sent to your email address.'
+
+    open_email(user[:email])
+    current_email.click_link 'Confirm my account'
+
+    expect(page).to have_content 'Your email address has been successfully confirmed'
   end
 
   scenario 'Guest registers with invalid data' do
