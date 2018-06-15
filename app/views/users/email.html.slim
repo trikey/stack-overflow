@@ -1,0 +1,6 @@
+.user_email_field
+  h4 Please enter your email before continuing
+  = form_tag set_user_email_path, method: :post
+  = label_tag :email
+  = email_field_tag :email
+  = submit_tag 'Send'

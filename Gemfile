@@ -39,6 +39,11 @@ gem 'cocoon'
 gem 'skim'
 gem 'gon'
 gem 'responders'
+gem 'omniauth'
+gem 'omniauth-facebook'
+gem 'omniauth-twitter'
+gem 'omniauth-vkontakte'
+gem 'letter_opener'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -75,6 +80,7 @@ group :test do
   gem 'fuubar'
   gem 'rack_session_access'
   gem 'rspec-page-regression', github: 'teachbase/rspec-page-regression', branch: 'use-imatcher'
+  gem 'capybara-email'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
