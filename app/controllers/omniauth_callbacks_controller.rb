@@ -10,7 +10,7 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def set_email
     if params[:email].present?
-      session[:email] = params[:email]
+      session['devise.email'] = params[:email]
       authorize
     else
       render template: 'users/email'
@@ -19,9 +19,9 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def set_oauth
     auth = request.env['omniauth.auth']
-    session[:uid] = auth.uid
-    session[:provider] = auth.provider
-    session[:email] = auth.info[:email]
+    session['devise.uid'] = auth.uid
+    session['devise.provider'] = auth.provider
+    session['devise.email'] = auth.info[:email]
   end
 
   private
