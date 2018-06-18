@@ -14,12 +14,12 @@
     ul.answers
       = render @question.answers
 
-  - if user_signed_in?
+  - if can?(:create, Answer)
     = render 'answers/form', question: @question, answer: @answer
   - else
     = link_to 'Sign in to answer the Question', new_user_session_path
 
-  - if user_signed_in? && current_user.author_of?(@question)
+  - if can?(:update, @question) && can?(:destroy, @question)
     = link_to 'Edit', edit_question_path(@question)
     = link_to 'Delete', question_path(@question), method: :delete
 

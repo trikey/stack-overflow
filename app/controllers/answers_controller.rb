@@ -4,6 +4,8 @@ class AnswersController < ApplicationController
   before_action :set_question, only: [:create]
   after_action :publish_answer, only: [:create]
 
+  authorize_resource
+
   include Voted
 
   def edit; end
@@ -14,12 +16,6 @@ class AnswersController < ApplicationController
   end
 
   def update
-    unless current_user.author_of?(@answer)
-      flash[:alert] = 'Can not update not your answer'
-      redirect_to @answer.question
-      return
-    end
-
     if @answer.update(answer_params)
       redirect_to @answer.question
     else
@@ -28,21 +24,13 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    if current_user.author_of?(@answer)
-      @answer.destroy
-      flash[:notice] = 'Answer was successfully deleted.'
-    else
-      flash[:alert] = 'Can not delete not your answer'
-    end
+    @answer.destroy
+    flash[:notice] = 'Answer was successfully deleted.'
     redirect_to @answer.question
   end
 
   def best
-    unless current_user.author_of?(@answer.question)
-      flash[:alert] = 'Can not set best answer of not your question'
-      redirect_to @answer.question
-      return
-    end
+    authorize! :best, @answer
 
     @answer.make_best
     flash[:notice] = 'Answer marked as best'

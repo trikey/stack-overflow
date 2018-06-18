@@ -8,6 +8,7 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'capybara/email/rspec'
 require 'shoulda/matchers'
+require 'cancan/matchers'
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|

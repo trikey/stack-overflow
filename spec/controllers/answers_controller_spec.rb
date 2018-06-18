@@ -82,7 +82,7 @@ describe AnswersController do
       end
 
       it 'redirect to answers\'s question page' do
-        expect(response).to redirect_to @answer.question
+        expect(response).to redirect_to root_path
       end
     end
   end
@@ -147,6 +147,11 @@ describe AnswersController do
 
       it 'can not set answer as best' do
         expect { patch :best, params: { id: answer, format: :js } }.to_not change(answer, :best)
+      end
+
+      it 'get 403 status :forbidden' do
+        patch :best, params: { id: answer, format: :js }
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

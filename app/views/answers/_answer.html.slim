@@ -10,18 +10,18 @@
       = render partial: 'shared/nested_form/attachments', locals: { object: answer }
       = render 'comments/comments', commentable: answer
 
-      - if user_signed_in?
-        ul
-          - if !answer.best? && current_user.author_of?(answer.question)
-            li = link_to 'Make Best', best_answer_path(answer), method: :patch, remote: true
-          - if current_user.author_of?(answer)
-            li
-              = link_to 'Edit', answer, class: 'edit-answer', data: { 'answer-id': answer.id }
-              p
-                = simple_form_for answer, remote: true do |f|
-                  = f.error_notification
-                  = f.input :body, label: 'Your answer -'
-                  .form-group
-                    = render 'shared/nested_form/attachments_form', f: f, attachable: answer
-                  = f.button :submit, 'Update'
-            li = link_to 'Delete', answer, method: :delete, remote: true
+      ul
+        - if !answer.best? && can?(:best, answer)
+          li = link_to 'Make Best', best_answer_path(answer), method: :patch, remote: true
+        - if can?(:update, answer)
+          li
+            = link_to 'Edit', answer, class: 'edit-answer', data: { 'answer-id': answer.id }
+            p
+              = simple_form_for answer, remote: true do |f|
+                = f.error_notification
+                = f.input :body, label: 'Your answer -'
+                .form-group
+                  = render 'shared/nested_form/attachments_form', f: f, attachable: answer
+                = f.button :submit, 'Update'
+        - if can?(:destroy, answer)
+          li = link_to 'Delete', answer, method: :delete, remote: true
