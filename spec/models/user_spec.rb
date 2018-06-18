@@ -21,7 +21,7 @@ RSpec.describe User, type: :model do
 
   describe '.find_for_oauth' do
     let!(:user) { create(:user) }
-    let(:auth) { OmniAuth::AuthHash.new(provider: 'vkontakte', uid: '123456') }
+    let(:auth) { OmniAuth::AuthHash.new('devise.provider': 'vkontakte', 'devise.uid': '123456') }
 
     context 'user alredy has authorization' do
       it 'returns the user' do
@@ -32,7 +32,7 @@ RSpec.describe User, type: :model do
 
     context 'user has not authorization' do
       context 'user already exists' do
-        let(:auth) { OmniAuth::AuthHash.new(provider: 'vkontakte', uid: '123456', email: user.email) }
+        let(:auth) { OmniAuth::AuthHash.new('devise.provider': 'vkontakte', 'devise.uid': '123456', 'devise.email': user.email) }
 
         it 'does not create new user' do
           expect{ User.find_for_oauth(auth) }.to_not change(User, :count)
@@ -45,8 +45,8 @@ RSpec.describe User, type: :model do
         it 'creates authorization with provider and uid' do
           authorization = User.find_for_oauth(auth).authorizations.first
 
-          expect(authorization.provider).to eq auth.provider
-          expect(authorization.uid).to eq auth.uid
+          expect(authorization.provider).to eq auth['devise.provider']
+          expect(authorization.uid).to eq auth['devise.uid']
         end
 
         it 'return the user' do
@@ -56,7 +56,7 @@ RSpec.describe User, type: :model do
 
       context 'user does not exist' do
         context 'provider has email' do
-          let(:auth) { OmniAuth::AuthHash.new(provider: 'vkontakte', uid: '123456', email: 'new@user.com') }
+          let(:auth) { OmniAuth::AuthHash.new('devise.provider': 'vkontakte', 'devise.uid': '123456', 'devise.email': 'new@user.com') }
 
           it 'creates new user' do
             expect { User.find_for_oauth(auth) }.to change(User, :count).by(1)
@@ -68,7 +68,7 @@ RSpec.describe User, type: :model do
 
           it 'fills user email' do
             user = User.find_for_oauth(auth)
-            expect(user.email).to eq auth[:email]
+            expect(user.email).to eq auth['devise.email']
           end
 
           it 'creates authorization for user' do
@@ -78,13 +78,13 @@ RSpec.describe User, type: :model do
 
           it 'creates authorizations with provider and uid' do
             authorization = User.find_for_oauth(auth).authorizations.first
-            expect(authorization.provider).to eq auth.provider
-            expect(authorization.uid).to eq auth.uid
+            expect(authorization.provider).to eq auth['devise.provider']
+            expect(authorization.uid).to eq auth['devise.uid']
           end
         end
 
         context 'provider has not email' do
-          let(:auth) { OmniAuth::AuthHash.new(provider: 'vkontakte', uid: '123456') }
+          let(:auth) { OmniAuth::AuthHash.new('devise.provider': 'vkontakte', 'devise.uid': '123456') }
 
           it 'should not initialize user' do
             expect(User.find_for_oauth(auth)).to be_nil
@@ -100,12 +100,12 @@ RSpec.describe User, type: :model do
       end
 
       it 'return nil if not set auth.provider' do
-        auth = OmniAuth::AuthHash.new(uid: '123456')
+        auth = OmniAuth::AuthHash.new('devise.uid': '123456')
         expect(User.find_for_oauth(auth)).to be_nil
       end
 
       it 'return nil if not set auth.uid' do
-        auth = OmniAuth::AuthHash.new(provider: 'vkontakte')
+        auth = OmniAuth::AuthHash.new('devise.provider': 'vkontakte')
         expect(User.find_for_oauth(auth)).to be_nil
       end
     end

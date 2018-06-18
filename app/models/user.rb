@@ -14,15 +14,15 @@ class User < ApplicationRecord
   end
 
   def self.find_for_oauth(auth)
-    return nil if (auth.blank? || auth[:provider].blank? || auth[:uid].blank?)
+    return nil if (auth.blank? || auth['devise.provider'].blank? || auth['devise.uid'].blank?)
 
-    authorization = Authorization.where(provider: auth[:provider], uid: auth[:uid].to_s).first
+    authorization = Authorization.where(provider: auth['devise.provider'], uid: auth['devise.uid'].to_s).first
     return authorization.user if authorization
 
-    return nil if (auth[:email].blank?)
+    return nil if (auth['devise.email'].blank?)
 
-    user = User.find_or_initialize_by(email: auth[:email])
-    authorization = user.authorizations.build(provider: auth[:provider], uid: auth[:uid])
+    user = User.find_or_initialize_by(email: auth['devise.email'])
+    authorization = user.authorizations.build(provider: auth['devise.provider'], uid: auth['devise.uid'])
 
     if user.persisted?
       authorization.save
