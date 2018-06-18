@@ -2,6 +2,6 @@ FactoryBot.define do
   factory :comment do
     user nil
     body 'Some comment'
-    commentable nil
+    commentable { |obj| obj.association(:question) }
   end
 end

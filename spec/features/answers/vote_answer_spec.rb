@@ -34,7 +34,7 @@ feature 'Vote for answer', %(
 
           expect(page).to have_content '0'
         end
-        expect(page).to have_content 'You can not vote for your answer'
+        expect(page).to have_content 'You are not authorized to access this page'
       end
     end
 

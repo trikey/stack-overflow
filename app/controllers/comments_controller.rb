@@ -7,6 +7,7 @@ class CommentsController < ApplicationController
   respond_to :json
 
   def create
+    authorize! :create, Comment
     respond_with(@comment = @commentable.comments.create(comment_params.merge(user: current_user)))
   end
 

@@ -9,6 +9,16 @@ class ApplicationController < ActionController::Base
 
   before_action :gon_user, unless: :devise_controller?
 
+  check_authorization unless: :devise_controller?
+
+  rescue_from CanCan::AccessDenied do |e|
+    respond_to do |format|
+      format.html { redirect_to root_url, alert: e.message }
+      format.json { render json: { errors: e.message.to_s }, status: :forbidden }
+      format.js   { head :forbidden }
+    end
+  end
+
   private
 
   def gon_user
