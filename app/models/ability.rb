@@ -33,5 +33,7 @@ class Ability
     can [:vote_up, :vote_down], [Question, Answer] do |resource|
       resource.user_id != user.id
     end
+
+    can [:read, :me], User
   end
 end
