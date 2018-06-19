@@ -5,10 +5,20 @@ Rails.application.routes.draw do
     post :set_email, controller: :omniauth_callbacks, as: :set_user_email
   end
 
+  use_doorkeeper
+
   concern :votable do
     member do
       patch :vote_up
       patch :vote_down
+    end
+  end
+
+  namespace :api do
+    namespace :v1 do
+      resources :profiles do
+        get :me, on: :collection
+      end
     end
   end
 

@@ -3,6 +3,8 @@ class User < ApplicationRecord
   has_many :answers, dependent: :nullify
   has_many :authorizations, dependent: :destroy
 
+  scope :without, -> (id) { where('id != ?', id) }
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
