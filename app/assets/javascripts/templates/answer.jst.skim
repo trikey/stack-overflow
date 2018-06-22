@@ -1,4 +1,4 @@
-div.answer.clearfix id = "answer_#{@answer.id}"
+li.answer.clearfix id = "answer_#{@answer.id}"
   == JST["templates/shared/votes"](votable: @answer, path: "answers/#{@answer.id}")
 
   ul.list-inline

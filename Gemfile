@@ -66,6 +66,10 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'capybara-webkit'
   gem 'json_spec'
+
+  gem 'active_model_serializers'
+  gem 'oj'
+  gem 'oj_mimic_json'
 end
 
 group :development do

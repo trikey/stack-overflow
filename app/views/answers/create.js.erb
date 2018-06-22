@@ -1,6 +1,5 @@
 <% if @answer.errors.any? %>
   $('#new_answer').replaceWith('<%= j render 'answers/form', question: @question, answer: @answer %>')
 <% else %>
-  $('.answers').append('<%= j render @answer %>');
   $('#new_answer').replaceWith('<%= j render 'answers/form', question: @question, answer: @question.answers.new %>')
 <% end %>
