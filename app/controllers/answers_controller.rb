@@ -43,10 +43,7 @@ class AnswersController < ApplicationController
     return if @answer.errors.any?
     ActionCable.server.broadcast(
         "answers_#{@question.id}",
-        ApplicationController.render(json: {
-            answer: @answer,
-            attachments: @answer.attachments
-        })
+        { answer: @answer, attachments: @answer.attachments }.to_json
     )
   end
 

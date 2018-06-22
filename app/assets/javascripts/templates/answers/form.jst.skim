@@ -2,7 +2,6 @@ form.edit_answer action="/answers/#{@answer.id}" id="answer_form_#{@answer.id}" 
   input name="utf8" type="hidden" value="✓"
   input type="hidden" name="_method" value="patch"
 
-  fieldset
     .form-group
       label for="answer_body" Answer
       textarea.form-control name="answer[body]" id="answer_body"= @answer.body

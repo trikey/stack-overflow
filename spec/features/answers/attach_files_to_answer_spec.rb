@@ -34,9 +34,9 @@ feature 'Attach files to answers', %q(
     click_on 'Create Answer'
 
     within '.answers' do
-      expect(page).to have_link 'img.jpg', href: '/uploads/attachment/file/1/img.jpg'
-      expect(page).to have_link 'img2.jpg', href: '/uploads/attachment/file/2/img2.jpg'
-      expect(page).to_not have_link 'img3.jpg', href: '/uploads/attachment/file/3/img3.jpg'
+      expect(page).to have_link 'img.jpg'
+      expect(page).to have_link 'img2.jpg'
+      expect(page).to_not have_link 'img3.jpg'
     end
   end
 end
