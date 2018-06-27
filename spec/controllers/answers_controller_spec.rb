@@ -4,154 +4,211 @@ describe AnswersController do
   it_behaves_like 'voted'
 
   let(:question) { create(:question) }
-  let(:answer) { create(:answer, user: subject.current_user) }
-  let(:user) { create(:user) }
 
   describe 'POST #create' do
-    login_user
-    context 'with valid attributes' do
-      it 'saves the new answer in the database' do
-        expect { post :create, params: { question_id: question.id, answer: attributes_for(:answer), format: :js } }.
-          to change(question.answers, :count).by(1)
+    let(:parameters) do
+      { question_id: question, answer: attributes_for(:answer), format: :js }
+    end
+
+    subject { post :create, params: parameters }
+
+    describe 'Authorized user' do
+      login_user
+
+      context 'with valid attributes' do
+        it 'saves the new answer in database' do
+          expect { subject }.to change(question.answers.where(user: @user), :count).by(1)
+        end
+
+        it 'render temlate create' do
+          subject
+          expect(response).to render_template :create
+        end
       end
 
-      it 'connects answer to user after create' do
-        expect { post :create, params: { question_id: question.id, answer: attributes_for(:answer), format: :js } }.
-          to change(subject.current_user.answers, :count).by(1)
-      end
+      context 'with invalid attributes' do
+        let(:parameters) do
+          { question_id: question, answer: attributes_for(:invalid_answer), format: :js }
+        end
 
-      it 'render create template' do
-        post :create, params: { question_id: question, answer: attributes_for(:answer), format: :js }
-        expect(response).to render_template :create
+        it 'does not save the answer' do
+          expect { subject }.to_not change(Answer, :count)
+        end
+
+        it 'render create template' do
+          subject
+          expect(response).to render_template :create
+        end
       end
     end
 
-    context 'with invalid attributes' do
-      it 'does not save the answer' do
-        expect { post :create, params: { question_id: question.id, answer: attributes_for(:invalid_answer), format: :js } }.to_not change(Answer, :count)
+    describe 'Non-authorized user can not create answer' do
+      it 'can not create answer' do
+        expect { subject }.to_not change(Answer, :count)
       end
 
-      it 'render create template' do
-        post :create, params: { question_id: question.id, answer: attributes_for(:invalid_answer), format: :js }
-        expect(response).to render_template :create
-      end
-    end
-  end
-
-  describe 'PATCH #update' do
-    login_user
-    context 'author updates answer with valid attributes' do
-      it 'assigns the requested answer to @answer' do
-        patch :update, params: { id: answer, answer: attributes_for(:answer) }
-        expect(assigns(:answer)).to eq answer
-      end
-
-      it 'changes answer attributes' do
-        patch :update, params: { id: answer, answer: { body: 'new body' } }
-        answer.reload
-        expect(answer.body).to eq 'new body'
-      end
-
-      it 'redirects to the question show view' do
-        patch :update, params: { id: answer, answer: attributes_for(:answer) }
-        expect(response).to redirect_to answer.question
-      end
-    end
-
-    context 'invalid attributes' do
-      before { patch :update, params: { id: answer, answer: { body: nil } } }
-
-      it 'does not change answer attributes' do
-        answer.reload
-        expect(answer.body).to eq 'Answer for question'
-      end
-
-      it 're-renders edit view' do
-        expect(response).to render_template :edit
-      end
-    end
-
-    context 'not author tries to update answer' do
-      before {
-        @answer = create(:answer, user: user)
-        patch :update, params: { id: @answer, answer: { body: 'new body' } }
-      }
-      it 'can not update answer' do
-        @answer.reload
-        expect(@answer.body).not_to eq 'new body'
-      end
-
-      it 'redirect to answers\'s question page' do
-        expect(response).to redirect_to root_path
+      it 'get 401 status Unauthorized' do
+        subject
+        expect(response.status).to eq 401
       end
     end
   end
 
   describe 'DELETE #destroy' do
-    login_user
-    context 'author' do
-      before { answer }
+    describe 'Authorized user' do
+      login_user
 
-      it 'deletes answer' do
-        expect { delete :destroy, params: { id: answer } }.to change(Answer, :count).by(-1)
+      context 'author' do
+        let(:question) { create(:question_with_answers, answers_count: 1, user: @user) }
+        let(:parameters) { { question_id: question, id: question.answers.first } }
+
+        subject { delete :destroy, params: parameters, format: :js }
+
+        it 'delete answer' do
+          expect { subject }.to change(question.answers, :count).by(-1)
+        end
+
+        it 'redirect to question view' do
+          subject
+          expect(response).to redirect_to question
+        end
       end
 
-      it 'redirect to index view' do
-        delete :destroy, params: { id: answer }
-        expect(response).to redirect_to answer.question
-      end
-    end
+      context 'not author' do
+        it 'can not delete answer' do
+          question = create(:question_with_answers, answers_count: 1)
+          parameters = { question_id: question, id: question.answers.first, format: :js }
 
-    context 'not author' do
-      before { @answer = create(:answer, user: user) }
-      it 'can not delete answer' do
-        expect { delete :destroy, params: { id: @answer.id } }.to_not change(Answer, :count)
-      end
-
-      it 'redirect to answers\'s question page' do
-        delete :destroy, params: { id: answer }
-        expect(response).to redirect_to answer.question
+          expect { subject }.to_not change(question.answers, :count)
+        end
       end
     end
   end
 
+  describe 'Non-authorized user' do
+    let(:question) { create(:question_with_answers) }
+    let(:parameters) { { question_id: question, id: question.answers.first } }
 
-  describe 'PATCH #best' do
-    login_user
-    context 'author' do
-      let!(:question) { create(:question, user: subject.current_user) }
-      let!(:answer1) { create(:answer, question: question) }
-      let!(:answer2) { create(:answer, question: question, best: true) }
+    subject { delete :destroy, params: parameters }
 
-      before do
-        patch :best, params: { id: answer1, format: :js }
+    it 'can not delete answer' do
+      expect { subject }.to_not change(question.answers, :count)
+    end
+
+    it 'redirect_to log in' do
+      subject
+      expect(response).to redirect_to new_user_session_path
+    end
+  end
+
+  describe 'PATCH #update' do
+    let(:answer) { create(:answer, question: question) }
+    let(:parameters) { { id: answer.id, format: :js, answer: { body: 'Change answer' } } }
+
+    subject { patch :update, params: parameters }
+
+    describe 'authorized user' do
+      login_user
+
+      context 'can update his answer' do
+        let(:answer) { create(:answer, question: question, user: @user) }
+
+        context 'with valid attributes' do
+          before { subject }
+
+          it 'change answer' do
+            expect(answer.reload.body).to eq 'Change answer'
+          end
+
+          it 'redirects to the question show view' do
+            expect(response).to redirect_to answer.question
+          end
+        end
+
+        context 'with invalid attributes' do
+          let(:parameters) { { id: answer.id, format: :js, answer: { body: "" } } }
+
+          before { subject }
+
+          it 'not change answer' do
+            expect(answer.reload.body).to eq 'Answer for question'
+          end
+
+          it 'render edit template' do
+            expect(response).to render_template :edit
+          end
+        end
       end
 
-      it 'assigns answer' do
-        expect(assigns(:answer)).to eq answer1
-      end
+      context 'can not update not his answer' do
+        before { subject }
 
-      it 'set answer as best' do
-        expect(answer1.reload).to be_best
-        expect(answer2.reload).to_not be_best
-      end
+        it 'not change answer' do
+          expect(answer.reload.body).to_not eq 'Change answer'
+        end
 
-      it 'redirect to question' do
-        expect(response).to redirect_to answer1.question
+        it 'get 403 status :forbidden' do
+          expect(response).to have_http_status(:forbidden)
+        end
       end
     end
 
-    context 'not author' do
-      let!(:question) { create(:question) }
-      let!(:answer) { create(:answer, question: question) }
+    describe 'unauthorized user' do
+      before { subject }
 
-      it 'can not set answer as best' do
-        expect { patch :best, params: { id: answer, format: :js } }.to_not change(answer, :best)
+      it 'can not update answer' do
+        expect(answer.body).to_not eq 'Change answer'
       end
 
-      it 'get 403 status :forbidden' do
+      it 'get 401 status :unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
+  describe 'PATCH #best' do
+    describe 'Unauthorized user' do
+      it 'get 401 status Unauthorized' do
+        answer = create(:answer, question: question)
         patch :best, params: { id: answer, format: :js }
-        expect(response).to have_http_status(:forbidden)
+
+        expect(response.status).to eq 401
+      end
+    end
+
+    describe 'Authorized user' do
+      login_user
+
+      context 'as the author of the question' do
+        let!(:question) { create(:question, user: @user) }
+        let!(:answer1) { create(:answer, question: question) }
+        let!(:answer2) { create(:answer, question: question, best: true) }
+
+        before do
+          patch :best, params: { id: answer1, format: :js }
+        end
+
+        it 'assigns answer' do
+          expect(assigns(:answer)).to eq answer1
+        end
+
+        it 'set answer as best' do
+          expect(answer1.reload).to be_best
+          expect(answer2.reload).to_not be_best
+        end
+
+        it 'redirect to question' do
+          expect(response).to redirect_to answer1.question
+        end
+      end
+
+      context 'as non author of the question' do
+        let!(:question) { create(:question) }
+        let!(:answer) { create(:answer, question: question) }
+
+        it 'can not mark answer as best' do
+          expect { patch :best, params: { id: answer, format: :js } }.to_not change(answer, :best)
+        end
       end
     end
   end

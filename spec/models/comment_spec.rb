@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Comment, type: :model do
+  it_behaves_like 'Authorable'
+
   it { should belong_to(:commentable) }
 
   it { should validate_inclusion_of(:commentable_type).in_array(%w(Question Answer)) }

@@ -47,6 +47,7 @@ RSpec.configure do |config|
   config.include FeatureMacros, type: :feature
   config.include OmniauthMacros, type: :feature
   config.extend ControllerMacros, type: :controller
+  config.include ApiHelper, type: :request
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
