@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'Vote for question', %(
+feature 'Vote for question', %q(
   In order to show my opinion about question
   As an authorized user
   I'd like to be able to vote for question

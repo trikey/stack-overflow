@@ -3,7 +3,7 @@ require 'rails_helper'
 describe QuestionsController do
   it_behaves_like 'voted'
 
-  let(:question) { create(:question, user: subject.current_user) }
+  let(:question) { create(:question, user: @user) }
   let(:user) { create(:user) }
 
   describe 'GET #index' do
@@ -70,25 +70,29 @@ describe QuestionsController do
 
   describe 'POST #create' do
     login_user
+    let(:parameters) { { question: attributes_for(:question) } }
+    subject { post :create, params: parameters }
+
     context 'with valid attributes' do
       it 'saves the new question in the database' do
-        expect { post :create, params: { question: attributes_for(:question) } }.
-          to change(subject.current_user.questions, :count).by(1)
+        expect { subject }.
+          to change(@user.questions, :count).by(1)
       end
 
       it 'redirects to show view' do
-        post :create, params: { question: attributes_for(:question) }
+        subject
         expect(response).to redirect_to question_path(assigns(:question))
       end
     end
 
     context 'with invalid attributes' do
+      let(:parameters) { { question: attributes_for(:invalid_question) } }
       it 'does not save the question' do
-        expect { post :create, params: { question: attributes_for(:invalid_question) } }.to_not change(Question, :count)
+        expect { subject }.to_not change(Question, :count)
       end
 
       it 're-renders new view' do
-        post :create, params: { question: attributes_for(:invalid_question) }
+        subject
         expect(response).to render_template :new
       end
     end
@@ -96,14 +100,25 @@ describe QuestionsController do
 
   describe 'PATCH #update' do
     login_user
+    let(:parameters) do
+      { id: question, question: { title: 'new title', body: 'new body' } }
+    end
+
+    subject { patch :update, params: parameters }
+
     context 'author tries to update question with valid attributes' do
-      it 'assings the requested question to @question' do
-        patch :update, params: { id: question, question: attributes_for(:question) }
-        expect(assigns(:question)).to eq question
+      context 'assings the requested question' do
+        let(:parameters) do
+          { id: question, question: attributes_for(:question) }
+        end
+        it 'to @question' do
+          subject
+          expect(assigns(:question)).to eq question
+        end
       end
 
       it 'changes question attributes' do
-        patch :update, params: { id: question, question: { title: 'new title', body: 'new body' } }
+        subject
         question.reload
         expect(question.title).to eq 'new title'
         expect(question.body).to eq 'new body'
@@ -118,7 +133,7 @@ describe QuestionsController do
     context 'not author tries to update question' do
       before {
         @question = create(:question, user: user)
-        patch :update, params: { id: question, question: { title: 'new title', body: 'new body' } }
+        subject
       }
       it 'can not update question' do
         @question.reload
@@ -132,7 +147,9 @@ describe QuestionsController do
     end
 
     context 'invalid attributes' do
-      before { patch :update, params: { id: question, question: { title: 'new title', body: nil } } }
+      let(:parameters) { { id: question, question: { title: nil } } }
+
+      before { subject }
 
       it 'does not change question attributes' do
         question.reload
@@ -148,28 +165,30 @@ describe QuestionsController do
 
   describe 'DELETE #destroy' do
     login_user
+    subject { delete :destroy, params: { id: question } }
+
     context 'author' do
       before { question }
 
       it 'deletes question' do
-        expect { delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
+        expect { subject }.to change(Question, :count).by(-1)
       end
 
       it 'redirect to index view' do
-        delete :destroy, params: { id: question }
+        subject
         expect(response).to redirect_to questions_path
       end
     end
 
     context 'not author' do
-      before { @question = create(:question, user: user) }
+      before { question.update(user: user) }
       it 'can not delete question' do
-        expect { delete :destroy, params: { id: @question.id } }.to_not change(Question, :count)
+        expect { subject }.to_not change(Question, :count)
       end
 
       it 'redirect to index view' do
-        delete :destroy, params: { id: question }
-        expect(response).to redirect_to questions_path
+        subject
+        expect(response).to redirect_to root_path
       end
     end
   end
