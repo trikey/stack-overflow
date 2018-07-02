@@ -4,6 +4,7 @@ RSpec.describe User, type: :model do
   it { should have_many(:questions).dependent(:nullify) }
   it { should have_many(:answers).dependent(:nullify) }
   it { should have_many(:authorizations).dependent(:destroy) }
+  it { should have_many(:subscribes).dependent(:destroy) }
 
   describe '#author_of?' do
     let(:user) { create(:user) }
@@ -184,6 +185,30 @@ RSpec.describe User, type: :model do
       user.save
       user.update_with_password(params)
       expect(user.reload.email).to eq params[:email]
+    end
+  end
+
+  describe '#has_subscribe?' do
+    let!(:user) { create(:user) }
+    let!(:question) { create(:question) }
+
+    it 'user has subscribe to question' do
+      user.subscribes.create(question_id: question.id)
+      expect(user.has_subscribe?(question)).to be_truthy
+    end
+
+    it 'user has not subscribe to question' do
+      expect(user.has_subscribe?(question)).to be_falsey
+    end
+  end
+
+  describe '#get_subscribe' do
+    let(:user) { create(:user) }
+    let(:question) { create(:question) }
+
+    it 'get subscribe for question' do
+      subscribe = user.subscribes.create(question_id: question.id)
+      expect(user.get_subscribe(question)).to eq(subscribe)
     end
   end
 end

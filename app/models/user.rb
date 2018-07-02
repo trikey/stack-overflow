@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_many :questions, dependent: :nullify
   has_many :answers, dependent: :nullify
   has_many :authorizations, dependent: :destroy
+  has_many :subscribes, dependent: :destroy
 
   scope :without, -> (id) { where('id != ?', id) }
 
@@ -62,5 +63,13 @@ class User < ApplicationRecord
     else
       super
     end
+  end
+
+  def has_subscribe?(question)
+    subscribes.where(question: question).exists?
+  end
+
+  def get_subscribe(question)
+    subscribes.where(question: question).first
   end
 end

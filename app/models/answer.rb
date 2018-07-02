@@ -6,6 +6,8 @@ class Answer < ApplicationRecord
 
   belongs_to :question
 
+  after_create :notify_subscribed_users
+
   validates :body, presence: true
   validates :best, uniqueness: { scope: :question_id }, if: :best?
 
@@ -18,4 +20,9 @@ class Answer < ApplicationRecord
     end
   end
 
+  private
+
+  def notify_subscribed_users
+    NotifySubscribedUsersJob.perform_later(self)
+  end
 end

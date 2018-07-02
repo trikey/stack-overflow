@@ -9,7 +9,9 @@ require 'rspec/rails'
 require 'capybara/email/rspec'
 require 'shoulda/matchers'
 require 'cancan/matchers'
+require 'sidekiq/testing'
 
+Sidekiq::Testing.fake!
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     with.test_framework :rspec

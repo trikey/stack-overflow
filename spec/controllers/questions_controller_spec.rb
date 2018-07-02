@@ -79,6 +79,10 @@ describe QuestionsController do
           to change(@user.questions, :count).by(1)
       end
 
+      it 'subscribe user to question' do
+        expect { subject }.to change(@user.subscribes, :count).by(1)
+      end
+
       it 'redirects to show view' do
         subject
         expect(response).to redirect_to question_path(assigns(:question))
@@ -100,6 +104,7 @@ describe QuestionsController do
 
   describe 'PATCH #update' do
     login_user
+    let!(:question) { create(:question) }
     let(:parameters) do
       { id: question, question: { title: 'new title', body: 'new body' } }
     end
@@ -107,6 +112,15 @@ describe QuestionsController do
     subject { patch :update, params: parameters }
 
     context 'author tries to update question with valid attributes' do
+      before { question.update(user: @user) }
+      it 'changes question attributes' do
+        subject
+        question.reload
+        expect(question.title).to eq 'new title'
+        expect(question.body).to eq 'new body'
+        expect(@user.subscribes).to be_empty
+      end
+
       context 'assings the requested question' do
         let(:parameters) do
           { id: question, question: attributes_for(:question) }
@@ -115,13 +129,6 @@ describe QuestionsController do
           subject
           expect(assigns(:question)).to eq question
         end
-      end
-
-      it 'changes question attributes' do
-        subject
-        question.reload
-        expect(question.title).to eq 'new title'
-        expect(question.body).to eq 'new body'
       end
 
       it 'redirects to the updated question' do
@@ -140,10 +147,6 @@ describe QuestionsController do
         expect(@question.title).not_to eq 'new title'
         expect(@question.body).not_to eq 'new body'
       end
-
-      it 'redirect to question\'s question page' do
-        expect(response).to redirect_to question
-      end
     end
 
     context 'invalid attributes' do
@@ -155,10 +158,6 @@ describe QuestionsController do
         question.reload
         expect(question.title).not_to eq 'new title'
         expect(question.body).not_to eq nil
-      end
-
-      it 're-renders edit view' do
-        expect(response).to render_template :edit
       end
     end
   end
