@@ -1,0 +1,3 @@
+<% unless @subscribe.errors.any? %>
+$("#subscribe_btn").replaceWith("<%= j link_to 'Unsubscribe', subscribe_path(@subscribe), id: 'unsubscribe_btn', class: 'btn btn-primary', remote: true, method: :delete %>")
+<% end %>

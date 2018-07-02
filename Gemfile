@@ -46,6 +46,8 @@ gem 'omniauth-vkontakte'
 gem 'letter_opener'
 gem 'cancancan'
 gem 'doorkeeper', '4.2.6'
+gem 'sidekiq'
+gem 'whenever'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

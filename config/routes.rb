@@ -1,4 +1,9 @@
+require 'sidekiq/web'
 Rails.application.routes.draw do
+  authenticate :user, lambda { |u| u.admin? } do
+    mount Sidekiq::Web => "/sidekiq"
+  end
+
   devise_for :users, controllers: { omniauth_callbacks: 'omniauth_callbacks', confirmations: 'confirmations' }
 
   devise_scope :user do
@@ -33,6 +38,7 @@ Rails.application.routes.draw do
     resources :answers, concerns: [:votable, :commentable], except: [:index, :show, :new] do
       patch :best, on: :member
     end
+    resources :subscribes, only: [:create, :destroy], shallow: true
   end
 
   root to: 'questions#index'
