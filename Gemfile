@@ -48,6 +48,8 @@ gem 'cancancan'
 gem 'doorkeeper', '4.2.6'
 gem 'sidekiq'
 gem 'whenever'
+gem 'thinking-sphinx'
+gem 'mysql2'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
