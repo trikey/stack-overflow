@@ -32,6 +32,7 @@ html.no-js[lang="en"]
         = link_to 'Ask Question', new_question_path, class: 'button expand hide-for-small-only'
       footer
 
+    = render 'searches/form', form_class: 'navbar-form navbar-right'
 
     - if flash.present?
       .alert-boxes

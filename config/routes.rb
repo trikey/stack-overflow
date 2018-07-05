@@ -4,6 +4,8 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => "/sidekiq"
   end
 
+  resources :searches, only: [:index]
+
   devise_for :users, controllers: { omniauth_callbacks: 'omniauth_callbacks', confirmations: 'confirmations' }
 
   devise_scope :user do

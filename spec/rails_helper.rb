@@ -39,6 +39,15 @@ Dir[Rails.root.join('spec/**/concerns/**/*.rb')].each { |f| require f }
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
+  config.include SphinxHelpers, type: :feature
+
+  config.before(:suite) do
+    # Ensure sphinx directories exist for the test environment
+    ThinkingSphinx::Test.init
+    # Configure and start Sphinx, and automatically
+    # stop Sphinx at the end of the test suite.
+    ThinkingSphinx::Test.start_with_autostop
+  end
 
   Capybara.javascript_driver = :webkit
   Capybara.server = :puma
