@@ -19,6 +19,8 @@
 .byebug_history
 .idea
 config/database.yml
+config/secrets.yml
+.env
 tmp
 
 # Ignore uploaded files
