@@ -13,7 +13,7 @@ set :deploy_user, 'deployer'
 
 set :linked_files, %w{config/database.yml .env}
 
-set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets public/system}
+set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets public/system public/uploads}
 
 namespace :deploy do
   desc "Restart application"
