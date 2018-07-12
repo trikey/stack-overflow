@@ -53,6 +53,7 @@ gem 'mysql2'
 gem 'dotenv'
 gem 'dotenv-deployment', require: 'dotenv/deployment'
 gem 'therubyracer'
+gem 'active_model_serializers'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -74,7 +75,6 @@ group :development, :test do
   gem 'capybara-webkit'
   gem 'json_spec'
 
-  gem 'active_model_serializers'
   gem 'oj'
   gem 'oj_mimic_json'
 end
