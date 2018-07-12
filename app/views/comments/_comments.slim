@@ -1,12 +1,14 @@
 .comments
+  h3 Comments
   .comments-list
     - commentable.comments.each do |comment|
       - if comment.persisted?
         .comment= comment.body
+  br
 
   .comment-new
     - if can?(:create, Comment)
-      = link_to 'add comment', '', class: 'add_comment_link'
+      = link_to 'add comment', '', class: 'add_comment_link btn btn-primary'
 
       = form_for [commentable, commentable.comments.build], remote: true, data: { type: :json } do |f|
         .form-group

@@ -2,9 +2,10 @@ module ApplicationHelper
   def alert_class(type)
     types = {
       error: :alert,
-      notice: :info,
+      notice: 'alert-success',
+      alert: 'alert-danger',
     }
-    types[type] || type
+    types[type.to_sym] || type
   end
 
   def vote_link(object, vote_type)
@@ -16,7 +17,7 @@ module ApplicationHelper
     }
 
     link_to(polymorphic_path(["vote_#{vote_type}", object]), options) do
-      content_tag(:i, vote_type, class: "glyphicon glyphicon-chevron-#{vote_type}", aria: { hidden: true })
+      content_tag(:i, '', class: "glyphicon glyphicon-chevron-#{vote_type}", aria: { hidden: true })
     end.html_safe
   end
 end

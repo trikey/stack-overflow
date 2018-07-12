@@ -2,26 +2,26 @@
   li.answer[id="answer_#{answer.id}"]
     p
       = render 'shared/votes_panel', object: answer
-    p
+    div
       - if answer.best?
         strong Best answer
         br
       = answer.body
       = render partial: 'shared/nested_form/attachments', locals: { object: answer }
-      = render 'comments/comments', commentable: answer
 
-      ul
-        - if !answer.best? && can?(:best, answer)
-          li = link_to 'Make Best', best_answer_path(answer), method: :patch, remote: true
-        - if can?(:update, answer)
-          li
-            = link_to 'Edit', answer, class: 'edit-answer', data: { 'answer-id': answer.id }
-            p
-              = simple_form_for answer, remote: true do |f|
-                = f.error_notification
-                = f.input :body, label: 'Your answer -'
-                .form-group
-                  = render 'shared/nested_form/attachments_form', f: f, attachable: answer
-                = f.button :submit, 'Update'
-        - if can?(:destroy, answer)
-          li = link_to 'Delete', answer, method: :delete, remote: true
+      - if !answer.best? && can?(:best, answer)
+        = link_to 'Make Best', best_answer_path(answer), method: :patch, remote: true
+      - if can?(:destroy, answer)
+        = link_to 'Delete', answer, method: :delete, class: 'btn btn-danger', remote: true
+      - if can?(:update, answer)
+        = link_to 'Edit', answer, class: 'btn btn-primary edit-answer', data: { 'answer-id': answer.id }
+        p
+          = simple_form_for answer, remote: true do |f|
+            = f.error_notification
+            = f.input :body, input_html: { class: 'form-control' }, label: 'Your answer -'
+            .form-group
+              = render 'shared/nested_form/attachments_form', f: f, attachable: answer
+            = f.button :submit, 'Update', class: 'btn btn-primary'
+
+      = render 'comments/comments', commentable: answer
+    div.clearfix

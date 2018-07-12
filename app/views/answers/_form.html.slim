@@ -1,6 +1,6 @@
 = simple_form_for [question, answer], remote: true do |f|
   = f.error_notification
-  = f.input :body, label: 'Your answer -'
+  = f.input :body, input_html: { class: 'form-control' }, label: 'Your answer -'
   .form-group
     = render 'shared/nested_form/attachments_form', f: f, attachable: answer
-  = f.button :submit
+  = f.button :submit, class: 'btn btn btn-primary'

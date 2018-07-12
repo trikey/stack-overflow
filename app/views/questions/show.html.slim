@@ -1,8 +1,13 @@
 .question id="question_#{@question.id}" data-question-id="#{@question.id}"
+  - if can?(:update, @question) && can?(:destroy, @question)
+    = link_to 'Edit', edit_question_path(@question), class: 'btn btn-primary'
+    = link_to 'Delete', question_path(@question), method: :delete, class: 'btn btn-danger'
+
   p = @question.title
   p = @question.body
   p
     = render 'shared/votes_panel', object: @question
+  div.clearfix
 
   - if current_user && current_user.has_subscribe?(@question)
     = link_to 'Unsubscribe', subscribe_path(current_user.get_subscribe(@question)), remote: true, method: :delete, id: 'unsubscribe_btn', class: 'btn btn-primary'
@@ -18,16 +23,11 @@
 
   h2#answers-title = pluralize(@question.answers.count, 'answer')
   - if @question.answers.present?
-    ul.answers
+    ul.answers.list-unstyled
       = render @question.answers
 
   - if can?(:create, Answer)
     = render 'answers/form', question: @question, answer: @answer
   - else
     = link_to 'Sign in to answer the Question', new_user_session_path
-
-  - if can?(:update, @question) && can?(:destroy, @question)
-    = link_to 'Edit', edit_question_path(@question)
-    = link_to 'Delete', question_path(@question), method: :delete
-
 

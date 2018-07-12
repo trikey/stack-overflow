@@ -13,8 +13,27 @@
  *= require_tree .
  *= require_self
  */
-
+@import "bootstrap-sprockets";
+@import "bootstrap";
 
 .simple_form.edit_answer {
     display: none;
+}
+
+ul.rating_block {
+  float: left;
+  width: 35px;
+}
+
+li.rating {
+  font-size: 18px;
+  font-weight: bold;
+  color: #5a5a5a ;
+}
+
+#error_explanation {
+  color: #a94442;;
+}
+.new_comment {
+  display: none;
 }

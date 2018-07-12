@@ -16,6 +16,7 @@
 //= require turbolinks
 //= require action_cable
 //= require cocoon
+//= require bootstrap-sprockets
 //= require_tree .
 
 var App = App || {}

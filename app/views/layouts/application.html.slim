@@ -11,33 +11,36 @@ html.no-js[lang="en"]
     = Gon::Base.render_data
   body
     header
-      .contain-to-grid
+      .contain-to-grid.navbar.navbar-default
         nav.top-bar[data-topbar role="navigation"]
-          ul.right
+          ul.nav.navbar-nav
             - if user_signed_in?
               li = link_to "Signed in as #{current_user.email}", edit_user_registration_path
               li = link_to 'Sign out', destroy_user_session_path, method: :delete
             - else
               li = link_to 'Sign in', new_user_session_path
               li = link_to 'Sign up', new_user_registration_path
+            li
+              = link_to 'View questions', questions_path
             li.has-form.show-for-small-only
               = link_to 'Ask Question', new_question_path, class: 'button'
 
     div#flash
 
-    .row
-      article.medium-9.columns
-        = yield
-      aside.medium-3.columns
-        = link_to 'Ask Question', new_question_path, class: 'button expand hide-for-small-only'
-      footer
+    .container
+      = render 'searches/form', form_class: 'navbar-form navbar-right'
 
-    = render 'searches/form', form_class: 'navbar-form navbar-right'
+      .row
+        article.medium-12.columns
+          = yield
+        footer
 
-    - if flash.present?
-      .alert-boxes
-        - flash.each do |key, value|
-          .alert-box[data-alert class="#{alert_class(key)}"]
-            = value + ' '
-            a.close[href="#"] ×
+      - if flash.present?
+        .alert-boxes
+          - flash.each do |key, value|
+            .alert[data-alert role="alert" class="alert-dismissible #{alert_class(key)}"]
+              button[type="button" class="close" data-dismiss="alert" aria-label="Close"]
+                span[aria-hidden="true"] ×
+
+              = value + ' '
 

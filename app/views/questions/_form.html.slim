@@ -1,9 +1,9 @@
 = simple_form_for @question do |f|
   = f.error_notification
-  = f.input :title, label: 'Title -'
-  = f.input :body, input_html: { rows: 15 }, label: 'Body -'
+  = f.input :title, input_html: { class: 'form-control' }, label: 'Title -'
+  = f.input :body, input_html: { class: 'form-control', rows: 15 }, label: 'Body -'
 
   .form-group
     = render 'shared/nested_form/attachments_form', f: f, attachable: @question
 
-  = f.button :submit
+  = f.button :submit, class: 'btn btn-primary'
