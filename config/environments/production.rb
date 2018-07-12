@@ -41,6 +41,7 @@ Rails.application.configure do
       :authentication => :cram_md5
   }
   config.action_mailer.perform_caching = false
+  config.action_mailer.default_url_options = { host: '92.53.66.125' }
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
