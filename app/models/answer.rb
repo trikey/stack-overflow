@@ -4,7 +4,7 @@ class Answer < ApplicationRecord
   include Votable
   include Commentable
 
-  belongs_to :question
+  belongs_to :question, touch: true
 
   after_create :notify_subscribed_users
 

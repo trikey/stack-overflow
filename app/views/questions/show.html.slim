@@ -3,8 +3,12 @@
     = link_to 'Edit', edit_question_path(@question), class: 'btn btn-primary'
     = link_to 'Delete', question_path(@question), method: :delete, class: 'btn btn-danger'
 
-  p = @question.title
-  p = @question.body
+  - cache @question do
+    p = @question.title
+    p = @question.body
+    p
+      = render partial: 'shared/nested_form/attachments', locals: { object: @question }
+
   p
     = render 'shared/votes_panel', object: @question
   div.clearfix
@@ -14,9 +18,6 @@
   - else
     - if can?(:create, Subscribe)
       = link_to 'Subscribe', question_subscribes_path(@question), remote: true, method: :post, id: 'subscribe_btn', class: 'btn btn-primary'
-
-  p
-    = render partial: 'shared/nested_form/attachments', locals: { object: @question }
 
   p
     = render 'comments/comments', commentable: @question

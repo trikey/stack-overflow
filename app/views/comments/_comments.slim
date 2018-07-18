@@ -3,7 +3,8 @@
   .comments-list
     - commentable.comments.each do |comment|
       - if comment.persisted?
-        .comment= comment.body
+        - cache comment do
+          .comment= comment.body
   br
 
   .comment-new

@@ -6,8 +6,11 @@
       - if answer.best?
         strong Best answer
         br
-      = answer.body
-      = render partial: 'shared/nested_form/attachments', locals: { object: answer }
+
+      - cache answer do
+        p= answer.body
+        = render partial: 'shared/nested_form/attachments', locals: { object: answer }
+        = render 'comments/comments', commentable: answer
 
       - if !answer.best? && can?(:best, answer)
         = link_to 'Make Best', best_answer_path(answer), method: :patch, remote: true
@@ -23,5 +26,5 @@
               = render 'shared/nested_form/attachments_form', f: f, attachable: answer
             = f.button :submit, 'Update', class: 'btn btn-primary'
 
-      = render 'comments/comments', commentable: answer
     div.clearfix
+
